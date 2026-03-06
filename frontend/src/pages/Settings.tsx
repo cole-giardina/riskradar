@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { profile, reminders } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { GradientBorder } from '@/components/ui/gradient-border';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -98,52 +99,54 @@ export default function Settings() {
         <div className="p-3 rounded bg-[#00ff88]/20 text-[#00ff88] text-sm">{message}</div>
       )}
 
-      <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-        <h2 className="font-semibold mb-4">Two-Factor Authentication (2FA)</h2>
-        {user?.totp_enabled ? (
-          <form onSubmit={handleDisable2FA} className="space-y-4">
-            <p className="text-[#00ff88] text-sm">2FA is enabled.</p>
-            <input
-              type="text"
-              value={disableCode}
-              onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="Enter 6-digit code to disable"
-              className="w-full max-w-xs px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 rounded bg-[#ff3366]/20 text-[#ff3366] hover:bg-[#ff3366]/30"
-            >
-              Disable 2FA
+      <GradientBorder duration={3}>
+        <div className="p-6">
+          <h2 className="font-semibold mb-4">Two-Factor Authentication (2FA)</h2>
+          {user?.totp_enabled ? (
+            <form onSubmit={handleDisable2FA} className="space-y-4">
+              <p className="text-[#00ff88] text-sm">2FA is enabled.</p>
+              <input
+                type="text"
+                value={disableCode}
+                onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="Enter 6-digit code to disable"
+                className="w-full max-w-xs px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 rounded bg-[#ff3366]/20 text-[#ff3366] hover:bg-[#ff3366]/30"
+              >
+                Disable 2FA
+              </button>
+            </form>
+          ) : twoFAStep === 'qr' ? (
+            <form onSubmit={handleVerify2FA} className="space-y-4">
+              <p className="text-sm text-[#8b949e]">Scan with your authenticator app:</p>
+              <img src={qrCode} alt="QR Code" className="w-48 h-48 bg-white rounded p-2" />
+              <input
+                type="text"
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="Enter 6-digit code"
+                className="w-full max-w-xs px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white"
+              />
+              <div className="flex gap-2">
+                <button type="submit" disabled={loading || twoFACode.length !== 6} className="px-4 py-2 rounded bg-[#00ffcc] text-[#0d1117]">
+                  Verify & Enable
+                </button>
+                <button type="button" onClick={() => setTwoFAStep('idle')} className="px-4 py-2 text-[#8b949e]">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button onClick={handleSetup2FA} disabled={loading} className="px-4 py-2 rounded bg-[#00ffcc] text-[#0d1117]">
+              Enable 2FA
             </button>
-          </form>
-        ) : twoFAStep === 'qr' ? (
-          <form onSubmit={handleVerify2FA} className="space-y-4">
-            <p className="text-sm text-[#8b949e]">Scan with your authenticator app:</p>
-            <img src={qrCode} alt="QR Code" className="w-48 h-48 bg-white rounded p-2" />
-            <input
-              type="text"
-              value={twoFACode}
-              onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="Enter 6-digit code"
-              className="w-full max-w-xs px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white"
-            />
-            <div className="flex gap-2">
-              <button type="submit" disabled={loading || twoFACode.length !== 6} className="px-4 py-2 rounded bg-[#00ffcc] text-[#0d1117]">
-                Verify & Enable
-              </button>
-              <button type="button" onClick={() => setTwoFAStep('idle')} className="px-4 py-2 text-[#8b949e]">
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <button onClick={handleSetup2FA} disabled={loading} className="px-4 py-2 rounded bg-[#00ffcc] text-[#0d1117]">
-            Enable 2FA
-          </button>
-        )}
-      </div>
+          )}
+        </div>
+      </GradientBorder>
 
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
         <h2 className="font-semibold mb-4">Public Profile</h2>

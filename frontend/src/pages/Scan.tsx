@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { breach, paste, domain, password, quiz, dashboard } from '../lib/api';
+import { GradientBorder } from '@/components/ui/gradient-border';
 
 type Tab = 'breach' | 'paste' | 'domain' | 'password' | 'reuse' | 'quiz';
 
@@ -253,7 +254,7 @@ export default function Scan() {
       )}
 
       {tab === 'breach' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Check if your email is in a data breach</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Uses HaveIBeenPwned to check known breaches. Your email is never stored.
@@ -289,11 +290,11 @@ export default function Scan() {
               )}
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {tab === 'paste' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Check if your email appears in pastes</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Pastes are data dumps on sites like Pastebin. Check if your email was exposed.
@@ -327,11 +328,11 @@ export default function Scan() {
               )}
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {tab === 'domain' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Domain health check</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Check if a domain (e.g. company.com) has been breached. Enter domain or email.
@@ -365,11 +366,11 @@ export default function Scan() {
               )}
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {tab === 'password' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Password strength checker</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Analyzed locally. We also check against known breached passwords (k-anonymity).
@@ -414,11 +415,11 @@ export default function Scan() {
               )}
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {tab === 'reuse' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Password reuse checker</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Enter multiple passwords (one per line) to check for reuse and breach exposure. We never store them.
@@ -456,11 +457,11 @@ export default function Scan() {
               )}
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {tab === 'quiz' && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+        <GradientBorder duration={4} glow={false}><div className="p-6">
           <h2 className="font-semibold mb-2">Security habit quiz</h2>
           <p className="text-sm text-[#8b949e] mb-4">
             Quick questions about your security practices. Required for score calculation.
@@ -515,22 +516,24 @@ export default function Scan() {
               </p>
             </div>
           )}
-        </div>
+        </div></GradientBorder>
       )}
 
       {canCalculate && (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6 text-center">
-          <p className="text-[#8b949e] mb-4">
-            You've completed the quiz. Optionally run breach and password checks for a more accurate score.
-          </p>
-          <button
-            onClick={handleCalculateScore}
-            disabled={loading}
-            className="px-8 py-3 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] disabled:opacity-50"
-          >
-            {loading ? 'Calculating...' : 'Calculate & Save Score'}
-          </button>
-        </div>
+        <GradientBorder duration={2}>
+          <div className="p-6 text-center">
+            <p className="text-[#8b949e] mb-4">
+              You've completed the quiz. Optionally run breach and password checks for a more accurate score.
+            </p>
+            <button
+              onClick={handleCalculateScore}
+              disabled={loading}
+              className="px-8 py-3 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] disabled:opacity-50"
+            >
+              {loading ? 'Calculating...' : 'Calculate & Save Score'}
+            </button>
+          </div>
+        </GradientBorder>
       )}
     </div>
   );

@@ -15,6 +15,7 @@ import { Line } from 'react-chartjs-2';
 import { dashboard, tips } from '../lib/api';
 import type { SecurityScore } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { GradientBorder } from '@/components/ui/gradient-border';
 
 ChartJS.register(
   CategoryScale,
@@ -130,87 +131,99 @@ export default function Dashboard() {
       )}
 
       {score === null ? (
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-8 text-center">
-          <p className="text-[#8b949e] mb-4">
-            You haven't run a security scan yet. Complete the scan to get your score.
-          </p>
-          <Link
-            to="/scan"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] transition-colors"
-          >
-            Run Security Scan →
-          </Link>
-        </div>
+        <GradientBorder duration={3}>
+          <div className="p-8 text-center">
+            <p className="text-[#8b949e] mb-4">
+              You haven't run a security scan yet. Complete the scan to get your score.
+            </p>
+            <Link
+              to="/scan"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] transition-colors"
+            >
+              Run Security Scan →
+            </Link>
+          </div>
+        </GradientBorder>
       ) : (
         <>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-              <div className="flex items-baseline gap-2">
-                <span className={`text-5xl font-bold ${getScoreColor(score)}`}>
-                  {score}
-                </span>
-                <span className="text-2xl text-[#8b949e]">/ 100</span>
+            <GradientBorder duration={3}>
+              <div className="p-6">
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-5xl font-bold ${getScoreColor(score)}`}>
+                    {score}
+                  </span>
+                  <span className="text-2xl text-[#8b949e]">/ 100</span>
+                </div>
+                <p className="text-[#8b949e] mt-2">Current Security Score</p>
+                {data?.percentile != null && (
+                  <p className="text-[#00ffcc] text-sm mt-1">
+                    Top {100 - data.percentile}% — Industry avg: {data?.industry_average ?? 58}
+                  </p>
+                )}
               </div>
-              <p className="text-[#8b949e] mt-2">Current Security Score</p>
-              {data?.percentile != null && (
-                <p className="text-[#00ffcc] text-sm mt-1">
-                  Top {100 - data.percentile}% — Industry avg: {data?.industry_average ?? 58}
-                </p>
-              )}
-            </div>
+            </GradientBorder>
 
             {hasHistory && (
-              <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-                <h3 className="font-semibold mb-4">Score History</h3>
-                <div className="h-40">
-                  <Line data={chartData} options={chartOptions} />
+              <GradientBorder duration={4} glow={false}>
+                <div className="p-6">
+                  <h3 className="font-semibold mb-4">Score History</h3>
+                  <div className="h-40">
+                    <Line data={chartData} options={chartOptions} />
+                  </div>
                 </div>
-              </div>
+              </GradientBorder>
             )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <span className="text-[#ff6b35]">⚠</span> Risks Found
-              </h3>
-              <ul className="space-y-2">
-                {(data?.risks?.length ? data.risks : ['No risks identified']).map((r, i) => (
-                  <li key={i} className="text-sm text-[#e6edf3] flex items-start gap-2">
-                    <span className="text-[#ff6b35]">•</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <GradientBorder duration={5} glow={false}>
+              <div className="p-6">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <span className="text-[#ff6b35]">⚠</span> Risks Found
+                </h3>
+                <ul className="space-y-2">
+                  {(data?.risks?.length ? data.risks : ['No risks identified']).map((r, i) => (
+                    <li key={i} className="text-sm text-[#e6edf3] flex items-start gap-2">
+                      <span className="text-[#ff6b35]">•</span>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </GradientBorder>
 
-            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <span className="text-[#00ff88]">✔</span> Recommendations
-              </h3>
-              <ul className="space-y-2">
-                {(data?.recommendations?.length ? data.recommendations : ['Keep up the good work!']).map((r, i) => (
-                  <li key={i} className="text-sm text-[#e6edf3] flex items-start gap-2">
-                    <span className="text-[#00ff88]">•</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <GradientBorder duration={5} glow={false}>
+              <div className="p-6">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <span className="text-[#00ff88]">✔</span> Recommendations
+                </h3>
+                <ul className="space-y-2">
+                  {(data?.recommendations?.length ? data.recommendations : ['Keep up the good work!']).map((r, i) => (
+                    <li key={i} className="text-sm text-[#e6edf3] flex items-start gap-2">
+                      <span className="text-[#00ff88]">•</span>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </GradientBorder>
           </div>
 
           {tipList.length > 0 && (
-            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-              <h3 className="font-semibold mb-3">Security Tips</h3>
-              <ul className="space-y-2">
-                {tipList.map((tip, i) => (
-                  <li key={i} className="text-sm text-[#e6edf3] flex gap-2">
-                    <span className="text-[#00ffcc]">•</span>
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <GradientBorder duration={6} glow={false}>
+              <div className="p-6">
+                <h3 className="font-semibold mb-3">Security Tips</h3>
+                <ul className="space-y-2">
+                  {tipList.map((tip, i) => (
+                    <li key={i} className="text-sm text-[#e6edf3] flex gap-2">
+                      <span className="text-[#00ffcc]">•</span>
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </GradientBorder>
           )}
 
           <div className="text-center">

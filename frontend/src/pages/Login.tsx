@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { GradientDots } from '@/components/ui/gradient-dots';
+import { LiquidButton, LiquidGlassCard } from '@/components/ui/liquid-glass-button';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -56,84 +57,92 @@ export default function Login() {
           </h1>
           <p className="text-[#8b949e] mt-2">Your Cyber Security Score</p>
         </div>
-        <div className="bg-[#161b22]/40 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl">
-          <h2 className="text-xl font-semibold mb-4">
-            {pendingToken ? 'Enter 2FA code' : 'Sign in'}
-          </h2>
-          {pendingToken ? (
-            <form onSubmit={handle2FASubmit} className="space-y-4">
+        <LiquidGlassCard>
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              {pendingToken ? 'Enter 2FA code' : 'Sign in'}
+            </h2>
+            {pendingToken ? (
+              <form onSubmit={handle2FASubmit} className="space-y-4">
+                {error && (
+                  <div className="p-3 rounded bg-[#ff3366]/20 text-[#ff3366] text-sm">{error}</div>
+                )}
+                <div>
+                  <label className="block text-sm text-[#8b949e] mb-1">6-digit code</label>
+                  <input
+                    type="text"
+                    value={twoFACode}
+                    onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="000000"
+                    maxLength={6}
+                    className="w-full px-4 py-2 rounded bg-[#0d1117]/40 backdrop-blur-sm border border-white/[0.08] text-white focus:border-[#00ffcc] focus:outline-none text-center text-2xl tracking-widest"
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <LiquidButton
+                    type="submit"
+                    disabled={loading || twoFACode.length !== 6}
+                    size="lg"
+                    className="w-full"
+                  >
+                    {loading ? 'Verifying...' : 'Verify'}
+                  </LiquidButton>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPendingToken(null)}
+                  className="w-full py-2 text-sm text-[#8b949e] hover:text-white"
+                >
+                  ← Back
+                </button>
+              </form>
+            ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 rounded bg-[#ff3366]/20 text-[#ff3366] text-sm">{error}</div>
+                <div className="p-3 rounded bg-[#ff3366]/20 text-[#ff3366] text-sm">
+                  {error}
+                </div>
               )}
               <div>
-                <label className="block text-sm text-[#8b949e] mb-1">6-digit code</label>
+                <label className="block text-sm text-[#8b949e] mb-1">Email</label>
                 <input
-                  type="text"
-                  value={twoFACode}
-                  onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="000000"
-                  maxLength={6}
-                  className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none text-center text-2xl tracking-widest"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 rounded bg-[#0d1117]/40 backdrop-blur-sm border border-white/[0.08] text-white focus:border-[#00ffcc] focus:outline-none"
                 />
               </div>
-              <button
-                type="submit"
-                disabled={loading || twoFACode.length !== 6}
-                className="w-full py-2 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] disabled:opacity-50 transition-colors"
-              >
-                {loading ? 'Verifying...' : 'Verify'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPendingToken(null)}
-                className="w-full py-2 text-sm text-[#8b949e] hover:text-white"
-              >
-                ← Back
-              </button>
-            </form>
-          ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded bg-[#ff3366]/20 text-[#ff3366] text-sm">
-                {error}
+              <div>
+                <label className="block text-sm text-[#8b949e] mb-1">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 rounded bg-[#0d1117]/40 backdrop-blur-sm border border-white/[0.08] text-white focus:border-[#00ffcc] focus:outline-none"
+                />
               </div>
+              <div className="flex justify-center">
+                <LiquidButton
+                  type="submit"
+                  disabled={loading}
+                  size="lg"
+                  className="w-full"
+                >
+                  {loading ? 'Signing in...' : 'Sign in'}
+                </LiquidButton>
+              </div>
+            </form>
             )}
-            <div>
-              <label className="block text-sm text-[#8b949e] mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-[#8b949e] mb-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 rounded font-medium bg-[#00ffcc] text-[#0d1117] hover:bg-[#00e6b8] disabled:opacity-50 transition-colors"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </form>
-          )}
-          <p className="mt-4 text-center text-sm text-[#8b949e]">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-[#00ffcc] hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </div>
+            <p className="mt-4 text-center text-sm text-[#8b949e]">
+              Don't have an account?{' '}
+              <Link to="/register" className="text-[#00ffcc] hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </LiquidGlassCard>
       </div>
     </div>
   );
