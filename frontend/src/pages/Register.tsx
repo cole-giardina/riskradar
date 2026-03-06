@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { GradientDots } from '@/components/ui/gradient-dots';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -26,15 +27,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
+      <GradientDots duration={20} />
+      <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-[#00ffcc] flex items-center justify-center gap-2">
             <span>🛡️</span> RiskRadar
           </h1>
           <p className="text-[#8b949e] mt-2">Your Cyber Security Score</p>
         </div>
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6 shadow-xl">
+        <div className="bg-[#161b22]/40 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl">
           <h2 className="text-xl font-semibold mb-4">Create account</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -49,7 +51,7 @@ export default function Register() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Cole"
-                className="w-full px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white focus:border-[#00ffcc] focus:outline-none"
+                className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none"
               />
             </div>
             <div>
@@ -59,7 +61,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white focus:border-[#00ffcc] focus:outline-none"
+                className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none"
               />
             </div>
             <div>
@@ -70,7 +72,7 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
-                className="w-full px-4 py-2 rounded bg-[#0d1117] border border-[#30363d] text-white focus:border-[#00ffcc] focus:outline-none"
+                className="w-full px-4 py-2 rounded bg-[#0d1117]/60 backdrop-blur-sm border border-[#30363d]/50 text-white focus:border-[#00ffcc] focus:outline-none"
               />
             </div>
             <button
