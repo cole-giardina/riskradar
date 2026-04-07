@@ -14,9 +14,24 @@ export default function Settings() {
   const [reminderList, setReminderList] = useState<{ id: number; type: string; due_date: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageTone, setMessageTone] = useState<'success' | 'error'>('success');
+
+  const setSuccess = (text: string) => {
+    setMessageTone('success');
+    setMessage(text);
+  };
+  const setError = (text: string) => {
+    setMessageTone('error');
+    setMessage(text);
+  };
 
   useEffect(() => {
-    reminders.get().then((r) => setReminderList(r.reminders));
+    reminders
+      .get()
+      .then((r) => setReminderList(r.reminders))
+      .catch((err: unknown) =>
+        setError(err instanceof Error ? err.message : 'Could not load reminders')
+      );
   }, []);
 
   const handleSetup2FA = async () => {
@@ -27,7 +42,7 @@ export default function Settings() {
       setQrCode(res.qr_code);
       setTwoFAStep('qr');
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Failed');
+      setError(err instanceof Error ? err.message : 'Failed');
     } finally {
       setLoading(false);
     }
@@ -40,9 +55,9 @@ export default function Settings() {
     try {
       await profile.verify2FASetup(twoFACode);
       setTwoFAStep('idle');
-      setMessage('2FA enabled successfully');
+      setSuccess('2FA enabled successfully');
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Invalid code');
+      setError(err instanceof Error ? err.message : 'Invalid code');
     } finally {
       setLoading(false);
     }
@@ -54,9 +69,9 @@ export default function Settings() {
     setMessage('');
     try {
       await profile.disable2FA(disableCode);
-      setMessage('2FA disabled');
+      setSuccess('2FA disabled');
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Invalid code');
+      setError(err instanceof Error ? err.message : 'Invalid code');
     } finally {
       setLoading(false);
     }
@@ -68,9 +83,9 @@ export default function Settings() {
     setMessage('');
     try {
       await profile.updatePublic(publicEnabled ? publicUsername || null : null, publicEnabled);
-      setMessage('Profile updated');
+      setSuccess('Profile updated');
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Failed');
+      setError(err instanceof Error ? err.message : 'Failed');
     } finally {
       setLoading(false);
     }
@@ -81,14 +96,21 @@ export default function Settings() {
     try {
       const res = await reminders.create(type, 7);
       setReminderList((prev) => [...prev, { id: res.id, type: res.type, due_date: res.due_date }]);
+      setSuccess('Reminder added');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not add reminder');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteReminder = async (id: number) => {
-    await reminders.delete(id);
-    setReminderList((prev) => prev.filter((r) => r.id !== id));
+    try {
+      await reminders.delete(id);
+      setReminderList((prev) => prev.filter((r) => r.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not remove reminder');
+    }
   };
 
   return (
@@ -96,7 +118,16 @@ export default function Settings() {
       <h1 className="text-2xl font-bold">Settings</h1>
 
       {message && (
-        <div className="p-3 rounded bg-[#00ff88]/20 text-[#00ff88] text-sm">{message}</div>
+        <div
+          className={`p-3 rounded text-sm ${
+            messageTone === 'error'
+              ? 'bg-[#ff3366]/20 text-[#ff8899]'
+              : 'bg-[#00ff88]/20 text-[#00ff88]'
+          }`}
+          role="alert"
+        >
+          {message}
+        </div>
       )}
 
       <GradientBorder duration={3}>
