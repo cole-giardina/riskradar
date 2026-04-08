@@ -67,7 +67,11 @@ async def get_current_user(
     except JWTError:
         return None
 
-    result = await db.execute(select(User).where(User.id == int(user_id)))
+    try:
+        uid = int(user_id)
+    except (ValueError, TypeError):
+        return None
+    result = await db.execute(select(User).where(User.id == uid))
     user = result.scalar_one_or_none()
     return user
 
@@ -88,7 +92,11 @@ async def get_pending_2fa_user(
             return None
     except JWTError:
         return None
-    result = await db.execute(select(User).where(User.id == int(user_id)))
+    try:
+        uid = int(user_id)
+    except (ValueError, TypeError):
+        return None
+    result = await db.execute(select(User).where(User.id == uid))
     return result.scalar_one_or_none()
 
 

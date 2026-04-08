@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import {
   AlertTriangle,
@@ -8,11 +9,8 @@ import {
   Shield,
   Eye,
   EyeOff,
-  ExternalLink,
+  ArrowRight,
 } from 'lucide-react';
-
-/** Companion portfolio project: structured email feature extraction + classification */
-const PHISHING_DETECTOR_REPO = 'https://github.com/cole-giardina/phishing-detector';
 
 export function InteractiveSection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -118,16 +116,13 @@ function PhishingCard() {
         </div>
       )}
 
-      <a
-        href={PHISHING_DETECTOR_REPO}
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        to="/phishing"
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-[#00ffcc]/30 bg-[#00ffcc]/5 px-4 py-2.5 text-sm font-medium text-[#00ffcc] transition-colors hover:border-[#00ffcc]/50 hover:bg-[#00ffcc]/10"
-        title="Opens the Phishing Detector project on GitHub (clone or API docs to try your own samples)"
       >
-        Analyze sample as email
-        <ExternalLink className="h-4 w-4" />
-      </a>
+        Try the Phishing Analyzer
+        <ArrowRight className="h-4 w-4" />
+      </Link>
     </div>
   );
 }

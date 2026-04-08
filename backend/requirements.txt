@@ -12,3 +12,4 @@ httpx==0.26.0
 email-validator==2.1.0
 pydantic-settings==2.1.0
 slowapi==0.1.9
+tldextract>=5.0.0

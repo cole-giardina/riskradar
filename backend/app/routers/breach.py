@@ -1,14 +1,12 @@
 from fastapi import APIRouter, Depends, Request
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from app.auth import require_user
 from app.models import User
+from app.rate_limit import limiter
 from app.schemas import BreachCheckRequest, BreachResult
 from app.services.breach import check_breach
 
 router = APIRouter()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/check", response_model=BreachResult)

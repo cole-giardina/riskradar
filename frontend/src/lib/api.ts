@@ -145,6 +145,46 @@ export const tips = {
   get: () => api<{ tips: string[] }>('/tips'),
 };
 
+export const phishing = {
+  analyze: (rawEmail: string) =>
+    api<PhishingAnalyzeResponse>('/phishing/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ raw_email: rawEmail }),
+    }),
+};
+
+export interface PhishingLinkMismatch {
+  anchor_text: string;
+  href: string;
+  display_domain_guess: string | null;
+  href_host: string;
+  note: string;
+}
+
+export interface PhishingFeatures {
+  sender: string | null;
+  subject: string | null;
+  body_char_count: number;
+  body_snippet: string;
+  urls: string[];
+  unique_registered_domains: string[];
+  urgency_keyword_hits: string[];
+  link_mismatches: PhishingLinkMismatch[];
+  parsing_notes: string[];
+}
+
+export interface PhishingDetection {
+  verdict: 'phishing' | 'suspicious' | 'safe';
+  confidence: number;
+  signals: string[];
+  explanation: string;
+}
+
+export interface PhishingAnalyzeResponse {
+  features: PhishingFeatures;
+  detection: PhishingDetection;
+}
+
 export const profile = {
   setup2FA: () => api<{ secret: string; qr_code: string }>('/profile/2fa/setup', { method: 'POST' }),
   verify2FASetup: (code: string) =>

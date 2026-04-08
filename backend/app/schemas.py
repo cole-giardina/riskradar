@@ -1,17 +1,17 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 # Auth
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
-    display_name: str | None = None
+    password: str = Field(..., min_length=8, max_length=128)
+    display_name: str | None = Field(default=None, max_length=100)
 
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=128)
 
 
 class Token(BaseModel):
@@ -36,7 +36,7 @@ class UserResponse(BaseModel):
 
 # Breach
 class BreachCheckRequest(BaseModel):
-    email: str
+    email: str = Field(..., max_length=320)
 
 
 class BreachResult(BaseModel):
@@ -48,7 +48,7 @@ class BreachResult(BaseModel):
 
 # Password
 class PasswordCheckRequest(BaseModel):
-    password: str
+    password: str = Field(..., max_length=128)
 
 
 class PasswordStrengthResult(BaseModel):
@@ -62,7 +62,12 @@ class PasswordStrengthResult(BaseModel):
 
 
 class PasswordReuseRequest(BaseModel):
-    passwords: list[str]
+    passwords: list[str] = Field(..., max_length=20)
+
+    @field_validator("passwords")
+    @classmethod
+    def cap_password_lengths(cls, v: list[str]) -> list[str]:
+        return [p[:128] for p in v]
 
 
 class PasswordReuseResult(BaseModel):
@@ -82,7 +87,7 @@ class QuizQuestion(BaseModel):
 
 
 class QuizSubmit(BaseModel):
-    responses: dict[str, str]  # question_id -> answer
+    responses: dict[str, str] = Field(default_factory=dict, max_length=50)
 
 
 class QuizResult(BaseModel):

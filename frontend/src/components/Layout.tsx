@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Shield, LayoutDashboard, ScanSearch, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Shield, LayoutDashboard, ScanSearch, Mail, Settings, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/scan', label: 'Security Scan', icon: ScanSearch },
+  { to: '/phishing', label: 'Phishing', icon: Mail },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 

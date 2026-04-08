@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Scan from './pages/Scan';
 import Settings from './pages/Settings';
+import PhishingAnalyzer from './pages/PhishingAnalyzer';
 import PublicProfile from './pages/PublicProfile';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -33,6 +34,7 @@ function AppRoutes() {
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/scan" element={<Scan />} />
+        <Route path="/phishing" element={<PhishingAnalyzer />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

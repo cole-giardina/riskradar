@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 
 from app.database import get_db
 from app.auth import require_user, get_pending_2fa_user, verify_totp, create_access_token
 from app.models import User
+from app.rate_limit import limiter
 from app.schemas import UserResponse, Token
 
 router = APIRouter()
@@ -15,7 +16,9 @@ class Verify2FARequest(BaseModel):
 
 
 @router.post("/verify", response_model=Token)
+@limiter.limit("5/minute")
 async def verify_2fa(
+    request: Request,
     body: Verify2FARequest,
     user: User = Depends(get_pending_2fa_user),
     db: AsyncSession = Depends(get_db),

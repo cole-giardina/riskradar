@@ -1,6 +1,7 @@
 import { useState, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { breach, paste, domain, password, quiz, dashboard } from '../lib/api';
+import { breach, paste, domain, password, quiz, dashboard, phishing } from '../lib/api';
+import type { PhishingAnalyzeResponse } from '../lib/api';
 import {
   SearchCheck,
   FileText,
@@ -8,12 +9,15 @@ import {
   KeyRound,
   Copy,
   ClipboardList,
+  Mail,
   ArrowRight,
   CheckCircle2,
   AlertTriangle,
+  Link2,
+  Zap,
 } from 'lucide-react';
 
-type Tab = 'breach' | 'paste' | 'domain' | 'password' | 'reuse' | 'quiz';
+type Tab = 'breach' | 'paste' | 'domain' | 'password' | 'reuse' | 'quiz' | 'phishing';
 
 const setSpotlight = (e: MouseEvent<HTMLDivElement>) => {
   const rect = e.currentTarget.getBoundingClientRect();
@@ -108,6 +112,9 @@ export default function Scan() {
     recommendations: string[];
   } | null>(null);
 
+  const [phishingInput, setPhishingInput] = useState('');
+  const [phishingResult, setPhishingResult] = useState<PhishingAnalyzeResponse | null>(null);
+
   const loadQuiz = () => {
     if (quizQuestions.length === 0) {
       quiz.getQuestions().then(setQuizQuestions);
@@ -159,13 +166,23 @@ export default function Scan() {
     finally { setLoading(false); }
   };
 
+  const handlePhishingAnalyze = async (e: React.FormEvent) => {
+    e.preventDefault(); setError(''); setLoading(true); setPhishingResult(null);
+    try { setPhishingResult(await phishing.analyze(phishingInput)); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Analysis failed'); }
+    finally { setLoading(false); }
+  };
+
   const handleCalculateScore = async () => {
     setError(''); setLoading(true);
     try {
+      const phishVerdict = phishingResult?.detection.verdict;
       const allRisks = [
         ...(breachResult?.found ? [`Email found in ${breachResult.breach_count} data breach(es)`] : []),
         ...(pasteResult?.found ? [`Email found in ${pasteResult.paste_count} paste(s)`] : []),
         ...(reuseResult?.reuse_detected ? ['Password reuse detected across accounts'] : []),
+        ...(phishVerdict === 'phishing' ? ['Submitted email identified as phishing'] : []),
+        ...(phishVerdict === 'suspicious' ? ['Submitted email flagged as suspicious'] : []),
         ...(quizResult?.risks_identified || []),
       ];
       const allRecs = [
@@ -173,6 +190,7 @@ export default function Scan() {
         ...(pasteResult?.found ? ['Monitor paste sites for your data'] : []),
         ...(reuseResult?.reuse_detected ? ['Use unique passwords for each account'] : []),
         ...(pwdResult?.is_pwned ? ['Change this password immediately - it was found in a breach'] : []),
+        ...(phishVerdict && phishVerdict !== 'safe' ? ['Learn to recognize phishing red flags before clicking links'] : []),
         ...(quizResult?.recommendations || []),
       ];
       await dashboard.calculate({
@@ -196,6 +214,7 @@ export default function Scan() {
     { id: 'domain', label: 'Domain', icon: Globe },
     { id: 'password', label: 'Password', icon: KeyRound },
     { id: 'reuse', label: 'Reuse', icon: Copy },
+    { id: 'phishing', label: 'Phishing', icon: Mail },
     { id: 'quiz', label: 'Quiz', icon: ClipboardList },
   ];
 
@@ -241,6 +260,7 @@ export default function Scan() {
             (t.id === 'domain' && domainResult !== null) ||
             (t.id === 'password' && pwdResult !== null) ||
             (t.id === 'reuse' && reuseResult !== null) ||
+            (t.id === 'phishing' && phishingResult !== null) ||
             (t.id === 'quiz' && quizResult !== null);
           return (
             <button
@@ -415,6 +435,107 @@ export default function Scan() {
                     No reuse or breach exposure detected.
                   </div>
                 )}
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {tab === 'phishing' && (
+        <Card>
+          <div className="p-8">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.35em] text-[#00ffcc]">Phishing Analysis</p>
+            <h2 className="mb-2 text-lg font-semibold">Analyze a suspicious email</h2>
+            <p className="mb-6 text-sm text-[#8b949e]">Paste the full email text (headers + body) or just the body. The analyzer extracts features and classifies the message.</p>
+            <form onSubmit={handlePhishingAnalyze} className="space-y-4">
+              <textarea value={phishingInput} onChange={(e) => setPhishingInput(e.target.value)} placeholder={"From: security@paypa1-support.com\nSubject: Urgent: Verify your account\n\nClick https://evil.example/login to verify now."} rows={6} className={`${inputClass} font-mono text-xs`} />
+              <button type="submit" disabled={loading || !phishingInput.trim()} className={btnPrimary}>{loading ? 'Analyzing...' : 'Analyze Email'}</button>
+            </form>
+            {phishingResult && (
+              <div className="mt-5 space-y-4">
+                {/* Verdict badge */}
+                <div className={`flex items-center justify-between rounded-2xl border px-5 py-4 ${
+                  phishingResult.detection.verdict === 'phishing'
+                    ? 'border-[#ff3366]/20 bg-[#ff3366]/5'
+                    : phishingResult.detection.verdict === 'suspicious'
+                    ? 'border-[#ff6b35]/20 bg-[#ff6b35]/5'
+                    : 'border-[#00ff88]/20 bg-[#00ff88]/5'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    {phishingResult.detection.verdict === 'safe'
+                      ? <CheckCircle2 className="h-5 w-5 text-[#00ff88]" />
+                      : <AlertTriangle className={`h-5 w-5 ${phishingResult.detection.verdict === 'phishing' ? 'text-[#ff3366]' : 'text-[#ff6b35]'}`} />
+                    }
+                    <div>
+                      <span className={`text-sm font-semibold uppercase tracking-[0.2em] ${
+                        phishingResult.detection.verdict === 'phishing' ? 'text-[#ff3366]'
+                        : phishingResult.detection.verdict === 'suspicious' ? 'text-[#ff6b35]'
+                        : 'text-[#00ff88]'
+                      }`}>{phishingResult.detection.verdict}</span>
+                      <p className="mt-0.5 text-xs text-[#8b949e]">{phishingResult.detection.explanation}</p>
+                    </div>
+                  </div>
+                  <span className="text-lg font-bold text-white">{Math.round(phishingResult.detection.confidence * 100)}%</span>
+                </div>
+
+                {/* Signals */}
+                {phishingResult.detection.signals.length > 0 && (
+                  <div className="rounded-2xl border border-white/[0.08] bg-[#0d1117]/40 p-5">
+                    <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#00ffcc]">
+                      <Zap className="h-3.5 w-3.5" /> Signals
+                    </p>
+                    <ul className="space-y-2">{phishingResult.detection.signals.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-[#e6edf3]">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#ff6b35]" />{s}
+                      </li>
+                    ))}</ul>
+                  </div>
+                )}
+
+                {/* Extracted features summary */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {phishingResult.features.sender && (
+                    <div className="rounded-2xl border border-white/[0.06] px-4 py-3">
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-[#8b949e]">Sender</p>
+                      <p className="mt-1 text-sm text-[#e6edf3] break-all">{phishingResult.features.sender}</p>
+                    </div>
+                  )}
+                  {phishingResult.features.subject && (
+                    <div className="rounded-2xl border border-white/[0.06] px-4 py-3">
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-[#8b949e]">Subject</p>
+                      <p className="mt-1 text-sm text-[#e6edf3]">{phishingResult.features.subject}</p>
+                    </div>
+                  )}
+                  {phishingResult.features.urls.length > 0 && (
+                    <div className="rounded-2xl border border-white/[0.06] px-4 py-3 sm:col-span-2">
+                      <p className="mb-2 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.3em] text-[#8b949e]">
+                        <Link2 className="h-3 w-3" /> URLs Found ({phishingResult.features.urls.length})
+                      </p>
+                      <ul className="space-y-1">{phishingResult.features.urls.map((u, i) => (
+                        <li key={i} className="break-all text-xs text-[#00ffcc]/80">{u}</li>
+                      ))}</ul>
+                    </div>
+                  )}
+                  {phishingResult.features.urgency_keyword_hits.length > 0 && (
+                    <div className="rounded-2xl border border-white/[0.06] px-4 py-3 sm:col-span-2">
+                      <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[#8b949e]">Urgency Keywords</p>
+                      <div className="flex flex-wrap gap-2">{phishingResult.features.urgency_keyword_hits.map((kw) => (
+                        <span key={kw} className="rounded-full border border-[#ff6b35]/30 bg-[#ff6b35]/10 px-3 py-1 text-xs text-[#ff6b35]">{kw}</span>
+                      ))}</div>
+                    </div>
+                  )}
+                  {phishingResult.features.link_mismatches.length > 0 && (
+                    <div className="rounded-2xl border border-[#ff3366]/20 bg-[#ff3366]/5 px-4 py-3 sm:col-span-2">
+                      <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[#ff3366]">Link Mismatches</p>
+                      {phishingResult.features.link_mismatches.map((lm, i) => (
+                        <div key={i} className="mt-2 text-xs">
+                          <p className="text-[#e6edf3]">Display: <span className="text-[#ff6b35]">{lm.display_domain_guess}</span> &rarr; Actual: <span className="text-[#ff3366]">{lm.href_host}</span></p>
+                          <p className="mt-0.5 text-[#8b949e]">{lm.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
