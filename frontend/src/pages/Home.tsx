@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Navbar } from '@/components/home/Navbar';
-import { HeroSection } from '@/components/home/HeroSection';
+import { HeroOrbitDeck } from '@/components/ui/hero-modern';
 import { StatsSection } from '@/components/home/StatsSection';
 import { ProductPreviewSection } from '@/components/home/ProductPreviewSection';
 import { StorySection } from '@/components/home/StorySection';
@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
       <Navbar />
-      <HeroSection />
+      <HeroOrbitDeck />
       <StatsSection />
       <ProductPreviewSection />
       <StorySection />
