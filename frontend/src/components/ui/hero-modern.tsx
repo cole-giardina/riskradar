@@ -250,10 +250,10 @@ function HeroOrbitDeck() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-3">
                 <Link
-                  to="/register"
+                  to="/dashboard"
                   className="inline-flex items-center gap-2 rounded-full bg-[#00ffcc] px-6 py-3 text-sm font-semibold text-[#0d1117] transition-all hover:bg-[#00e6b8] hover:shadow-lg hover:shadow-[#00ffcc]/20"
                 >
-                  Check My Risk
+                  Try the Demo
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <button
@@ -457,10 +457,10 @@ function HeroOrbitDeck() {
               ))}
             </ul>
             <Link
-              to="/register"
+              to="/dashboard"
               className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#00ffcc]/10 border border-[#00ffcc]/20 px-6 py-3 text-sm font-semibold text-[#00ffcc] transition hover:bg-[#00ffcc]/20"
             >
-              Get Started Free
+              Try the Demo
               <ArrowRight className="h-4 w-4" />
             </Link>
           </aside>

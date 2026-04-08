@@ -4,7 +4,7 @@ import { Shield } from 'lucide-react';
 const links = [
   { label: 'Features', href: '#features' },
   { label: 'Learn', href: '#learn' },
-  { label: 'Sign In', to: '/login' },
+  { label: 'Try Demo', to: '/dashboard' },
 ];
 
 export function Footer() {

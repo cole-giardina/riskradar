@@ -1,24 +1,15 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Shield, LayoutDashboard, ScanSearch, Mail, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Outlet, NavLink } from 'react-router-dom';
+import { Shield, LayoutDashboard, ScanSearch, Mail, Menu, X } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/scan', label: 'Security Scan', icon: ScanSearch },
   { to: '/phishing', label: 'Phishing', icon: Mail },
-  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function Layout() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <div className="relative isolate min-h-screen">
@@ -71,16 +62,9 @@ export default function Layout() {
           </div>
 
           <div className="hidden items-center gap-4 md:flex">
-            <span className="text-xs uppercase tracking-[0.25em] text-[#8b949e]">
-              {user?.display_name || user?.email}
+            <span className="rounded-full border border-[#00ffcc]/20 bg-[#00ffcc]/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#00ffcc]">
+              Free Demo
             </span>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 rounded-full border border-white/[0.08] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#8b949e] transition-all hover:border-[#ff3366]/30 hover:bg-[#ff3366]/5 hover:text-[#ff3366]"
-            >
-              <LogOut className="h-3 w-3" />
-              Logout
-            </button>
           </div>
 
           {/* Mobile hamburger */}
@@ -114,15 +98,6 @@ export default function Layout() {
                   {item.label}
                 </NavLink>
               ))}
-              <div className="mt-2 border-t border-white/[0.06] pt-3">
-                <button
-                  onClick={() => { handleLogout(); setMobileOpen(false); }}
-                  className="flex w-full items-center gap-2.5 rounded-xl px-4 py-3 text-sm text-[#ff3366] hover:bg-[#ff3366]/5"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
-              </div>
             </div>
           </div>
         )}

@@ -41,16 +41,10 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <Link
-            to="/register"
+            to="/dashboard"
             className="rounded-lg bg-[#00ffcc] px-4 py-2 text-sm font-medium text-[#0d1117] transition-colors hover:bg-[#00e6b8]"
           >
-            Check My Risk
-          </Link>
-          <Link
-            to="/login"
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-[#8b949e] transition-colors hover:border-white/20 hover:text-white"
-          >
-            Sign In
+            Try the Demo
           </Link>
         </div>
 
@@ -83,18 +77,11 @@ export function Navbar() {
               ))}
               <div className="mt-3 flex flex-col gap-2 border-t border-white/[0.06] pt-3">
                 <Link
-                  to="/register"
+                  to="/dashboard"
                   onClick={() => setMobileOpen(false)}
                   className="rounded-lg bg-[#00ffcc] px-4 py-2 text-center text-sm font-medium text-[#0d1117]"
                 >
-                  Check My Risk
-                </Link>
-                <Link
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="rounded-lg border border-white/10 px-4 py-2 text-center text-sm font-medium text-[#8b949e]"
-                >
-                  Sign In
+                  Try the Demo
                 </Link>
               </div>
             </div>

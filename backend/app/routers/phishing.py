@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 
-from app.auth import require_user
-from app.models import User
 from app.rate_limit import limiter
 from app.services.phishing import (
     AnalyzeRequest,
@@ -19,7 +17,6 @@ _detector = OfflinePhishingDetector()
 async def analyze_email(
     request: Request,
     body: AnalyzeRequest,
-    user: User = Depends(require_user),
 ):
     features = extract_features(body.raw_email)
     detection = _detector.classify(features)

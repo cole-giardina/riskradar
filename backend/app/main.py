@@ -7,7 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from app.config import settings
 from app.rate_limit import limiter
-from app.routers import auth, users, breach, password, quiz, dashboard, paste, domain, tips, twofa, profile, reminders, public, phishing
+from app.routers import breach, password, quiz, dashboard, paste, domain, tips, public, phishing
 from app.database import engine
 from app.models import Base
 
@@ -38,17 +38,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-app.include_router(twofa.router, prefix="/api/auth/2fa", tags=["2fa"])
-app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(breach.router, prefix="/api/breach", tags=["breach"])
 app.include_router(paste.router, prefix="/api/paste", tags=["paste"])
 app.include_router(domain.router, prefix="/api/domain", tags=["domain"])
 app.include_router(password.router, prefix="/api/password", tags=["password"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
-app.include_router(profile.router, prefix="/api/profile", tags=["profile"])
-app.include_router(reminders.router, prefix="/api/reminders", tags=["reminders"])
 app.include_router(tips.router, prefix="/api/tips", tags=["tips"])
 app.include_router(public.router, prefix="/api/public", tags=["public"])
 app.include_router(phishing.router, prefix="/api/phishing", tags=["phishing"])

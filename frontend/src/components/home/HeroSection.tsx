@@ -56,10 +56,10 @@ export function HeroSection() {
               className="mt-8 flex flex-wrap gap-4"
             >
               <Link
-                to="/register"
+                to="/dashboard"
                 className="inline-flex items-center gap-2 rounded-lg bg-[#00ffcc] px-6 py-3 text-sm font-semibold text-[#0d1117] transition-all hover:bg-[#00e6b8] hover:shadow-lg hover:shadow-[#00ffcc]/20"
               >
-                Check My Risk
+                Try the Demo
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <button

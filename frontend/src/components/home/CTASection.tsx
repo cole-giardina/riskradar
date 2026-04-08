@@ -26,9 +26,9 @@ export function CTASection() {
             </span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-[#8b949e]">
-            Create a free account to save your score, track improvements, and
-            get personalized security recommendations. Start with a scan —
-            no commitment required.
+            Run a security scan, check your passwords, analyze suspicious emails,
+            and get a personalized risk score. Try the full demo — no account
+            required.
           </p>
         </motion.div>
 
@@ -39,17 +39,11 @@ export function CTASection() {
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <Link
-            to="/register"
+            to="/dashboard"
             className="inline-flex items-center gap-2 rounded-lg bg-[#00ffcc] px-8 py-3.5 text-sm font-semibold text-[#0d1117] transition-all hover:bg-[#00e6b8] hover:shadow-lg hover:shadow-[#00ffcc]/20"
           >
-            Create Free Account
+            Try the Demo
             <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-8 py-3.5 text-sm font-medium text-[#e6edf3] transition-colors hover:border-white/20 hover:bg-white/5"
-          >
-            Sign In
           </Link>
         </motion.div>
       </div>

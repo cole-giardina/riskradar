@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.auth import require_user
-from app.models import User
 from app.schemas import QuizSubmit, QuizResult, QuizQuestion
 from app.quiz_questions import QUIZ_QUESTIONS, calculate_quiz_score
 
@@ -22,10 +20,7 @@ async def get_quiz_questions():
 
 
 @router.post("/submit", response_model=QuizResult)
-async def submit_quiz(
-    submission: QuizSubmit,
-    user: User = Depends(require_user),
-):
+async def submit_quiz(submission: QuizSubmit):
     score_impact, risks, recommendations = calculate_quiz_score(submission.responses)
     return QuizResult(
         score_impact=score_impact,

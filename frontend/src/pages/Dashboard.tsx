@@ -14,7 +14,6 @@ import {
 import { Line } from 'react-chartjs-2';
 import { dashboard, tips } from '../lib/api';
 import type { SecurityScore } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import {
   ArrowRight,
   ShieldCheck,
@@ -75,7 +74,6 @@ function Card({
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
   const [data, setData] = useState<{
     current_score: SecurityScore | null;
     score_history: { score: number; date: string }[];
@@ -107,11 +105,11 @@ export default function Dashboard() {
     );
   }
 
-  const displayName = user?.display_name || user?.email?.split('@')[0] || 'User';
+  const displayName = 'Demo User';
   const score = data?.current_score?.score ?? null;
   const hasHistory = data?.score_history && data.score_history.length > 0;
-  const lastScan = user?.last_scan_at ? new Date(user.last_scan_at) : null;
-  const daysSinceScan = lastScan ? Math.floor((Date.now() - lastScan.getTime()) / 86400000) : null;
+  const lastScanDate = data?.current_score?.created_at ? new Date(data.current_score.created_at) : null;
+  const daysSinceScan = lastScanDate ? Math.floor((Date.now() - lastScanDate.getTime()) / 86400000) : null;
   const showReminder = daysSinceScan !== null && daysSinceScan >= 14;
 
   const getScoreColor = (s: number) => {

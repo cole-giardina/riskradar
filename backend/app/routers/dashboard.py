@@ -4,22 +4,20 @@ from sqlalchemy import select, desc
 from pydantic import BaseModel
 
 from app.database import get_db
-from app.auth import require_user
-from app.models import User, SecurityScore
+from app.models import SecurityScore
 from app.schemas import DashboardResponse, SecurityScoreResponse
 from app.data.industry_averages import get_percentile
 
 router = APIRouter()
 
+DEMO_USER_ID = 1
+
 
 @router.get("", response_model=DashboardResponse)
-async def get_dashboard(
-    user: User = Depends(require_user),
-    db: AsyncSession = Depends(get_db),
-):
+async def get_dashboard(db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(SecurityScore)
-        .where(SecurityScore.user_id == user.id)
+        .where(SecurityScore.user_id == DEMO_USER_ID)
         .order_by(desc(SecurityScore.created_at))
         .limit(30)
     )
@@ -63,24 +61,18 @@ class CalculateScoreRequest(BaseModel):
 @router.post("/calculate", response_model=SecurityScoreResponse)
 async def calculate_and_save_score(
     data: CalculateScoreRequest = Body(...),
-    user: User = Depends(require_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Calculate composite security score and save.
-    Called by frontend after gathering breach, password, quiz data.
-    """
-    # Base score: 50. Adjust based on breach (-10 per breach), password (+0-25), quiz (+0-25)
     base = 50
     breach_penalty = min(30, data.breach_count * 10)
-    password_bonus = (data.password_strength or 0) / 4  # 0-25
-    quiz_bonus = data.quiz_score / 4  # 0-25
+    password_bonus = (data.password_strength or 0) / 4
+    quiz_bonus = data.quiz_score / 4
 
     score = int(base - breach_penalty + password_bonus + quiz_bonus)
     score = max(0, min(100, score))
 
     security_score = SecurityScore(
-        user_id=user.id,
+        user_id=DEMO_USER_ID,
         score=score,
         breach_count=data.breach_count,
         password_strength=data.password_strength,
@@ -88,7 +80,6 @@ async def calculate_and_save_score(
         recommendations=data.recommendations,
     )
     db.add(security_score)
-    user.last_scan_at = security_score.created_at
     await db.flush()
     await db.refresh(security_score)
 
