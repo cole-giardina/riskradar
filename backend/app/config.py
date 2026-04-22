@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./riskradar.db"
     secret_key: str = ""
     hibp_api_key: str = ""
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,https://cole-giardina.github.io"
 
     @property
     def cors_origins_list(self) -> list[str]:
